@@ -16,75 +16,80 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uberapi.demo.entities.Cliente;
+import com.uberapi.demo.entities.Piloto;
 import com.uberapi.demo.entities.Viaje;
-import com.uberapi.demo.repositories.Clienterepository;
+import com.uberapi.demo.repositories.Pilotorepository;
 import com.uberapi.demo.repositories.Viajerepository;
 
 @RestController
-@RequestMapping(value="/clientes")
-public class Clientecontroller {
-	
+@RequestMapping(value="pilotos")
+public class Pilotocontroller {
+
 	@Autowired
-	Clienterepository repository;
-	
+	Pilotorepository repository;
 	@Autowired
-    Viajerepository viajeRepository;
+	Viajerepository viajeRepository;
 	
 	//GET 
 	@GetMapping
 	@ResponseStatus(code = HttpStatus.OK)
-	public Collection<Cliente> getListaClientes(){
-		Iterable<Cliente> listaClientes = repository.findAll();
+	public Collection<Piloto> getListaPilotos(){
+		Iterable<Piloto> listaPilotos = repository.findAll();
 		
-		return (Collection<Cliente>) listaClientes;
+		return (Collection<Piloto>) listaPilotos;
 		}
 	
-	
-	//Cliente
+	//Piloto 
 	@GetMapping(value = "/{id}")
 	@ResponseStatus(code = HttpStatus.OK)
-	public Cliente getCliente(@PathVariable(name = "id") Long id) {
+	public Piloto getCliente(@PathVariable(name = "id") Long id) {
 		
-		Optional<Cliente> Cliente = repository.findById(id);
-		Cliente result = null;
-		if(Cliente.isPresent()) {
-			result = Cliente.get();
+		Optional<Piloto> Piloto = repository.findById(id);
+		Piloto result = null;
+		if(Piloto.isPresent()) {
+			result = Piloto.get();
 		}
 		return result;	
 	}
 	
-	//POST 
+	//POST
 	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public Cliente createCliente(@RequestBody Cliente cliente ) {
-		Cliente nuevoCliente = repository.save(cliente);
-		return nuevoCliente;
+	public Piloto createPiloto(@RequestBody Piloto piloto ) {
+		Piloto nuevoPiloto = repository.save(piloto);
+		return nuevoPiloto;
 	}
 	
 	//PUT 
 	@PutMapping(value = "/{id}")
 	@ResponseStatus(code = HttpStatus.ACCEPTED)
-	public Cliente updateCliente(@PathVariable(name = "id") Long id, 
-			@RequestBody Cliente cliente) {
-			Optional<Cliente> oCliente = repository.findById(id);
-			if(oCliente.isPresent()) {
-				Cliente actual = oCliente.get(); 
+	public Piloto updatePiloto(@PathVariable(name = "id") Long id, 
+			@RequestBody Piloto piloto) {
+			Optional<Piloto> oPiloto = repository.findById(id);
+			if(oPiloto.isPresent()) {
+				Piloto actual = oPiloto.get();
+				
+				
 				actual.setId(id);
-				actual.setNombre(cliente.getNombre());
-				actual.setApellido(cliente.getApellido());
-				actual.setCorreo(cliente.getCorreo());
-				actual.setTelefono(cliente.getTelefono());
-				Cliente updatedCliente = repository.save(actual);
-				return updatedCliente;
+				actual.setNombre(piloto.getNombre());
+				actual.setApellido(piloto.getApellido());
+				actual.setLicencia(piloto.getLicencia()); //
+				actual.setTelefono(piloto.getTelefono());
+				actual.setMatricula(piloto.getMatricula());//
+				
+				
+				Piloto updatedPiloto = repository.save(actual);
+				
+				return updatedPiloto;
 			}
 			return null;
 		}
 	
 	@RequestMapping(value = "/{id}/viajes")
 	public ResponseEntity<List<Viaje>> getviaje(@PathVariable(name = "id" )long id){
-		List<Viaje> viaje = com.uberapi.demo.repositories.Viajerepository.findByIdCliente(id);
+		List<Viaje> viaje = com.uberapi.demo.repositories.Viajerepository.findByIdPiloto(id);
 		return ResponseEntity.ok(viaje);
 	}
-
+	
+	
 }
